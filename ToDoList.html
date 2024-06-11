@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>To Do List - Grocery</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #f2f2f2;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      #app {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #b8b8b8;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .inputcontainer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        gap: 10px;
+      }
+
+      input {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        margin-right: 10px;
+      }
+
+      #add {
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        background-color: #4caf50;
+        color: white;
+        cursor: pointer;
+        margin-left: -10px;
+      }
+
+      #list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      li {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px;
+        border-bottom: 1px solid #ccc;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        margin-bottom: 10px;
+      }
+
+      li > p {
+        font-weight: 600;
+      }
+
+      #deleteButton {
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        background-color: #f44336;
+        color: white;
+        cursor: pointer;
+      }
+
+      @media (max-width: 600px) {
+        #app {
+          max-width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <h1>To Do List</h1>
+      <div class="inputcontainer">
+        <input type="text" id="input" placeholder="Add to list..." />
+        <button id="add">Add</button>
+      </div>
+      <ul id="list"></ul>
+    </div>
+  </body>
+  <script>
+    const input = document.getElementById("input");
+    const add = document.getElementById("add");
+    const list = document.getElementById("list");
+
+    const items = JSON.parse(localStorage.getItem("items")) || [];
+
+    function renderList() {
+      list.innerHTML = "";
+      items.forEach((item, index) => {
+        const li = document.createElement("li");
+        const p = document.createElement("p");
+        const del = document.createElement("button");
+        del.id = "deleteButton";
+        p.contentEditable = true;
+        p.textContent = item;
+        li.appendChild(p);
+        li.appendChild(del);
+        list.appendChild(li);
+        del.textContent = "Delete";
+        del.addEventListener("click", () => {
+          list.removeChild(li);
+          items.splice(index, 1);
+          localStorage.setItem("items", JSON.stringify(items));
+        });
+      });
+    }
+
+    add.addEventListener("click", () => {
+      const text = input.value.trim();
+      if (text !== "") {
+        items.push(text);
+        input.value = "";
+        localStorage.setItem("items", JSON.stringify(items));
+        renderList();
+      }
+    });
+
+    document.addEventListener("DOMContentLoaded", renderList);
+  </script>
+</html>
