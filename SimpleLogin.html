@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=\, initial-scale=1.0" />
+    <title>Simple Login</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        height: 100vh;
+        display: grid;
+        place-items: center;
+      }
+
+      .login-container {
+        width: 400px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #dddddd;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+      }
+
+      h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 2rem;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      input {
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+      }
+
+      button {
+        margin-top: 2rem;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        background-color: #3639f4;
+        color: white;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-container">
+      <h2>Login</h2>
+      <form onsubmit="return validateLogin(event)">
+        <div id="error-message" class="error"></div>
+        <label for="username">Username:</label>
+        <input
+          type="text"
+          id="username"
+          placeholder="Username"
+          oninvalid="this.setCustomValidity('* 5-15 characters, only letters and numbers')"
+          oninput="setCustomValidity('')"
+          required
+        />
+        <label for="password">Password:</label>
+        <input
+          type="password"
+          id="password"
+          placeholder="Password"
+          oninvalid="this.setCustomValidity('* 8-20 characters, including uppercase letters, lowercase letters, numbers, and special characters')"
+          oninput="setCustomValidity('')"
+          required
+        />
+        <button type="submit">Login</button>
+      </form>
+    </div>
+  </body>
+  <script>
+    function validateLogin(event) {
+      event.preventDefault();
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+      const errorMessage = document.getElementById("error-message");
+
+      const usernamePattern = /^[a-zA-Z0-9]{5,15}$/;
+      const passwordPattern =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,20}$/;
+
+      if (!usernamePattern.test(username)) {
+        document
+          .getElementById("username")
+          .setCustomValidity("* 5-15 characters, only letters and numbers");
+        return false;
+      }
+
+      if (!passwordPattern.test(password)) {
+        document
+          .getElementById("password")
+          .setCustomValidity(
+            "* 8-20 characters, including uppercase letters, lowercase letters, numbers, and special characters"
+          );
+        return false;
+      }
+
+      document.getElementById("username").setCustomValidity("");
+      document.getElementById("password").setCustomValidity("");
+      errorMessage.textContent = "";
+      return true;
+    }
+  </script>
+</html>

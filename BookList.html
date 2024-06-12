@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book List</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f2f2f2;
+        height: 100dvh;
+        display: grid;
+        place-items: center;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #b6b6b6;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: bold;
+      }
+
+      .inputcontainer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        gap: 10px;
+      }
+
+      input {
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        flex: 1;
+      }
+
+      select {
+        padding: 10px;
+        border: none;
+      }
+
+      #add {
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        background-color: #4caf50;
+        color: white;
+        cursor: pointer;
+      }
+
+      #add:hover {
+        background-color: #388e3c;
+        transition: all 0.3s ease;
+      }
+
+      ul {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin: 10px 0;
+      }
+
+      li {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px;
+        border-bottom: 1px solid #ccc;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+      }
+
+      #del {
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        background-color: #f44336;
+        color: white;
+        cursor: pointer;
+      }
+
+      #del:hover {
+        background-color: #d32f2f;
+        transition: all 0.3s ease;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Book List</h1>
+      <label for="genre-select">Pick Genre:</label>
+      <div class="inputcontainer">
+        <input type="text" id="title-input" placeholder="Title" />
+        <select id="genre-input">
+          <option value="fiction">Fiction</option>
+          <option value="non-fiction">Non-Fiction</option>
+        </select>
+        <button id="add">Add</button>
+      </div>
+      <select id="genre-select">
+        <option value="all">All</option>
+        <option value="fiction">Fiction</option>
+        <option value="non-fiction">Non-fiction</option>
+      </select>
+      <ul id="book-list"></ul>
+    </div>
+  </body>
+  <script>
+    const titleInput = document.getElementById("title-input");
+    const genreInput = document.getElementById("genre-input");
+    const add = document.getElementById("add");
+    const genreSelect = document.getElementById("genre-select");
+    const bookList = document.getElementById("book-list");
+    let books = JSON.parse(localStorage.getItem("books")) || [
+      { title: "The Lord of the Rings", genre: "fiction" },
+      { title: "Harry Potter", genre: "fiction" },
+      { title: "To Kill a Mockingbird", genre: "fiction" },
+      { title: "A Brief History of Time", genre: "non-fiction" },
+      { title: "The Catcher in the Rye", genre: "non-fiction" },
+      { title: "Pride and Prejudice", genre: "non-fiction" },
+    ];
+
+    function displayBooks() {
+      const filteredBooks = filterBooksByGenre();
+      bookList.innerHTML = "";
+
+      filteredBooks.forEach((book) => {
+        const listItem = document.createElement("li");
+        const p = document.createElement("p");
+        const del = document.createElement("button");
+        del.id = "del";
+        p.textContent = book.title;
+        del.textContent = "Delete";
+        listItem.appendChild(p);
+        listItem.appendChild(del);
+        bookList.appendChild(listItem);
+
+        del.addEventListener("click", () => {
+          books = books.filter((b) => b !== book);
+          localStorage.setItem("books", JSON.stringify(books));
+          displayBooks();
+        });
+      });
+    }
+
+    function filterBooksByGenre() {
+      const selectedGenre = genreSelect.value;
+      if (selectedGenre === "all") {
+        return books;
+      } else {
+        return books.filter((book) => book.genre === selectedGenre);
+      }
+    }
+
+    genreSelect.addEventListener("change", displayBooks);
+    document.addEventListener("DOMContentLoaded", displayBooks);
+
+    add.addEventListener("click", () => {
+      const title = titleInput.value.trim();
+      const genre = genreInput.value.trim();
+      if (title !== "" && genre !== "") {
+        const newBook = { title, genre };
+        books.push(newBook);
+        titleInput.value = "";
+        genreInput.value = "";
+        localStorage.setItem("books", JSON.stringify(books));
+        displayBooks();
+      }
+    });
+  </script>
+</html>
