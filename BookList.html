@@ -110,7 +110,6 @@
   <body>
     <div class="container">
       <h1>Book List</h1>
-      <label for="genre-select">Pick Genre:</label>
       <div class="inputcontainer">
         <input type="text" id="title-input" placeholder="Title" />
         <select id="genre-input">
@@ -119,6 +118,7 @@
         </select>
         <button id="add">Add</button>
       </div>
+      <label for="genre-select">Pick Genre:</label>
       <select id="genre-select">
         <option value="all">All</option>
         <option value="fiction">Fiction</option>
@@ -179,12 +179,11 @@
 
     add.addEventListener("click", () => {
       const title = titleInput.value.trim();
-      const genre = genreInput.value.trim();
-      if (title !== "" && genre !== "") {
+      const genre = genreInput.value;
+      if (title !== "") {
         const newBook = { title, genre };
         books.push(newBook);
         titleInput.value = "";
-        genreInput.value = "";
         localStorage.setItem("books", JSON.stringify(books));
         displayBooks();
       }
