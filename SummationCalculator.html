@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Summation Calculator</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f0f0f0;
+      }
+      .calculator-container {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      .calculator-container input {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      .calculator-container button {
+        width: 100%;
+        padding: 10px;
+        background-color: #28a745;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .calculator-container button:hover {
+        background-color: #218838;
+      }
+      .result {
+        margin: 10px 0;
+        font-size: 18px;
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="calculator-container">
+      <h2>Summation Calculator</h2>
+      <input
+        type="text"
+        id="numbers"
+        placeholder="Enter numbers (separated by comma)"
+      />
+      <button onclick="calculateSum()">Calculate Sum</button>
+      <div id="result" class="result"></div>
+    </div>
+
+    <script>
+      const calculateSum = () => {
+        const input = document.getElementById("numbers").value;
+        const resultDiv = document.getElementById("result");
+
+        const numbers = input.split(",").map((num) => parseFloat(num.trim()));
+
+        // Validate input
+        if (numbers.some(isNaN)) {
+          resultDiv.textContent = "Please enter valid numbers.";
+          return;
+        }
+
+        const sum = (...nums) => {
+          let total = 0;
+          for (const num of nums) {
+            total += num;
+          }
+          return total;
+        };
+
+        // Display result
+        const totalSum = sum(...numbers);
+        resultDiv.textContent = `Sum: ${totalSum}`;
+      };
+    </script>
+  </body>
+</html>
