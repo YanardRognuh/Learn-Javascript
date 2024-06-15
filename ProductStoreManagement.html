@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Store product Management</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f0f0f0;
+      }
+
+      .product-container {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 400px;
+      }
+
+      .product-container h2 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .product-container input,
+      .product-container select,
+      .product-container .normal {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+      }
+
+      .product-list {
+        list-style-type: none;
+        padding: 0;
+      }
+
+      .product-list li {
+        margin: 5px 0;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .product-list li p {
+        display: inline-block;
+        margin-right: 10px;
+        font-weight: bold;
+      }
+
+      .result {
+        margin: 10px 0;
+        font-size: 18px;
+        color: #333;
+      }
+
+      #del {
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        background-color: #f44336;
+        color: white;
+        cursor: pointer;
+      }
+
+      #del:hover {
+        background-color: #d32f2f;
+        transition: all 0.3s ease;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="product-container">
+      <h2>Product Store Management</h2>
+      <input type="text" id="product-name" placeholder="Product Name" />
+      <input type="text" id="product-category" placeholder="Product Category" />
+      <input type="number" id="product-price" placeholder="Product Price" />
+      <button class="normal" onclick="addProduct()">Add Product</button>
+      <select id="category-filter">
+        <option value="all">All Categories</option>
+      </select>
+      <button class="normal" onclick="filterProducts()">Filter Products</button>
+      <button class="normal" onclick="calculateTotal()">
+        Calculate Total Price
+      </button>
+      <button class="normal" onclick="applyDiscount()">
+        Apply 10% Discount
+      </button>
+      <ul id="product-list" class="product-list">
+        <!-- Product list will be displayed here -->
+      </ul>
+      <div id="result" class="result"></div>
+    </div>
+  </body>
+  <script>
+    let products = JSON.parse(localStorage.getItem("products")) || [];
+
+    const addProduct = () => {
+      const name = document.getElementById("product-name").value;
+      const category = document.getElementById("product-category").value;
+      const price = parseFloat(document.getElementById("product-price").value);
+      const categoryFilter = document.getElementById("category-filter");
+
+      if (name && category && !isNaN(price)) {
+        products.push({ name, category, price });
+        displayProducts(products);
+        addCategoryOption(category);
+        localStorage.setItem("products", JSON.stringify(products));
+
+        document.getElementById("product-name").value = "";
+        document.getElementById("product-category").value = "";
+        document.getElementById("product-price").value = "";
+      } else {
+        alert("All fields must be filled correctly!");
+      }
+    };
+
+    const addCategoryOption = (category) => {
+      const categoryFilter = document.getElementById("category-filter");
+      const existingOptions = Array.from(categoryFilter.options).map(
+        (option) => option.value
+      );
+      if (!existingOptions.includes(category)) {
+        const option = document.createElement("option");
+        option.value = category;
+        option.textContent = category;
+        categoryFilter.appendChild(option);
+      }
+
+      // Save the categories to local storage
+      const categories = Array.from(categoryFilter.options).map(
+        (option) => option.value
+      );
+      localStorage.setItem("categories", JSON.stringify(categories));
+    };
+
+    const displayProducts = (productArray) => {
+      const productList = document.getElementById("product-list");
+      productList.innerHTML = "";
+
+      productArray.forEach((product) => {
+        const listItem = document.createElement("li");
+        const del = document.createElement("button");
+        del.textContent = "Delete";
+        del.id = "del";
+        listItem.textContent = `${product.name} - ${
+          product.category
+        } - Rp${product.price.toFixed(2)}`;
+        listItem.appendChild(del);
+        productList.appendChild(listItem);
+        del.addEventListener("click", () => {
+          products = products.filter((p) => p !== product);
+          displayProducts(products);
+          localStorage.setItem("products", JSON.stringify(products));
+        });
+      });
+    };
+
+    const filterProducts = () => {
+      const selectedCategory = document.getElementById("category-filter").value;
+      const filteredProducts =
+        selectedCategory === "all"
+          ? products
+          : products.filter((product) => product.category === selectedCategory);
+      displayProducts(filteredProducts);
+    };
+
+    const calculateTotal = () => {
+      const total = products.reduce((sum, product) => sum + product.price, 0);
+      const resultDiv = document.getElementById("result");
+      resultDiv.textContent = `Total Price: Rp${total.toFixed(2)}`;
+    };
+
+    // Curry function for discount
+    const applyDiscount = () => {
+      const discount = (rate) => (price) => price * (1 - rate);
+      const tenPercentDiscount = discount(0.1);
+
+      products = products.map((product) => ({
+        ...product,
+        price: tenPercentDiscount(product.price),
+      }));
+
+      displayProducts(products);
+      calculateTotal();
+      localStorage.setItem("products", JSON.stringify(products));
+    };
+
+    // Display initial product list
+    document.addEventListener("DOMContentLoaded", () => {
+      displayProducts(products);
+
+      // Restore categories from local storage
+      const categories = JSON.parse(localStorage.getItem("categories")) || [];
+      const categoryFilter = document.getElementById("category-filter");
+      categories.forEach((category) => {
+        const option = document.createElement("option");
+        option.value = category;
+        option.textContent = category;
+        categoryFilter.appendChild(option);
+      });
+    });
+  </script>
+</html>

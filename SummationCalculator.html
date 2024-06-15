@@ -58,7 +58,7 @@
       <input
         type="text"
         id="numbers"
-        placeholder="Enter numbers (separated by comma)"
+        placeholder="Enter numbers (separated by plus)"
       />
       <button onclick="calculateSum()">Calculate Sum</button>
       <div id="result" class="result"></div>
@@ -69,7 +69,7 @@
         const input = document.getElementById("numbers").value;
         const resultDiv = document.getElementById("result");
 
-        const numbers = input.split(",").map((num) => parseFloat(num.trim()));
+        const numbers = input.split("+").map((num) => parseFloat(num.trim()));
 
         // Validate input
         if (numbers.some(isNaN)) {
