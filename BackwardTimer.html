@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Backward Timer</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f0f0f0;
+      }
+      .timer-container {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 300px;
+        box-sizing: border-box;
+        text-align: center;
+      }
+      .timer-container input,
+      .timer-container button {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+      }
+
+      .timer-container #start {
+        background-color: #4caf50;
+        color: #fff;
+      }
+
+      .timer-container #start:hover {
+        background-color: #45a049;
+        transition: all 0.3s ease;
+      }
+
+      .timer-container #stop {
+        background-color: #f44336;
+        color: #fff;
+        display: none;
+      }
+
+      .timer-container #stop:hover {
+        background-color: #d32f2f;
+        transition: all 0.3s ease;
+      }
+
+      .timer-container #continue {
+        background-color: #f0f0f0;
+        color: #000;
+        display: none;
+      }
+
+      .timer-container #continue:hover {
+        background-color: #e0e0e0;
+        transition: all 0.3s ease;
+      }
+
+      .timer-container #reset {
+        background-color: #f0f0f0;
+        color: #000;
+      }
+
+      .timer-container #reset:hover {
+        background-color: #e0e0e0;
+        transition: all 0.3s ease;
+      }
+
+      .timer-container .timer {
+        font-size: 2em;
+        margin: 20px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="timer-container">
+      <h2>Backward Timer</h2>
+      <input
+        type="number"
+        id="time-input"
+        placeholder="Enter time in seconds"
+      />
+      <button id="start">Start</button>
+      <button id="stop" style="display: none">Stop</button>
+      <button id="continue" style="display: none">Continue</button>
+      <button id="reset">Reset</button>
+      <div class="timer" id="timer-display">00:00</div>
+    </div>
+  </body>
+  <script>
+    class CountdownTimer {
+      constructor(duration, displayElement) {
+        this.initialDuration = duration;
+        this.remainingTime = duration;
+        this.displayElement = displayElement;
+        this.timer = null;
+      }
+
+      start() {
+        this.updateDisplay(this.remainingTime);
+        this.timer = setInterval(() => {
+          this.remainingTime--;
+          this.updateDisplay(this.remainingTime);
+          if (this.remainingTime <= 0) {
+            clearInterval(this.timer);
+            alert("Time's Up!");
+          }
+        }, 1000);
+      }
+
+      pause() {
+        clearInterval(this.timer);
+      }
+
+      resume() {
+        this.start();
+      }
+
+      reset() {
+        clearInterval(this.timer);
+        this.remainingTime = this.initialDuration;
+        this.updateDisplay(this.remainingTime);
+      }
+
+      updateDisplay(time) {
+        const minutes = Math.floor(time / 60);
+        const seconds = time % 60;
+        this.displayElement.textContent = `${this.formatTime(
+          minutes
+        )}:${this.formatTime(seconds)}`;
+      }
+
+      formatTime(time) {
+        return time < 10 ? `0${time}` : time;
+      }
+    }
+
+    let countdown;
+
+    const startTimer = () => {
+      const timeInput = document.getElementById("time-input").value;
+      const displayElement = document.getElementById("timer-display");
+      const startButton = document.getElementById("start");
+      const stopButton = document.getElementById("stop");
+      const continueButton = document.getElementById("continue");
+      const resetButton = document.getElementById("reset");
+
+      if (timeInput && !isNaN(timeInput) && timeInput > 0) {
+        countdown = new CountdownTimer(parseInt(timeInput), displayElement);
+        countdown.start();
+        startButton.style.display = "none";
+        stopButton.style.display = "block";
+        continueButton.style.display = "none";
+      } else {
+        alert("Please enter a valid time in seconds.");
+      }
+    };
+
+    const stopTimer = () => {
+      countdown.pause();
+      document.getElementById("stop").style.display = "none";
+      document.getElementById("continue").style.display = "block";
+    };
+
+    const continueTimer = () => {
+      countdown.resume();
+      document.getElementById("stop").style.display = "block";
+      document.getElementById("continue").style.display = "none";
+    };
+
+    const resetTimer = () => {
+      countdown.reset();
+      document.getElementById("start").style.display = "block";
+      document.getElementById("stop").style.display = "none";
+      document.getElementById("continue").style.display = "none";
+    };
+
+    document.getElementById("start").addEventListener("click", startTimer);
+    document.getElementById("stop").addEventListener("click", stopTimer);
+    document
+      .getElementById("continue")
+      .addEventListener("click", continueTimer);
+    document.getElementById("reset").addEventListener("click", resetTimer);
+  </script>
+</html>
