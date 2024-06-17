@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Profile with Age Setting</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f0f0f0;
+      }
+      .profile-container {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 300px;
+        box-sizing: border-box;
+        text-align: center;
+      }
+      .profile-container input,
+      .profile-container button {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+      }
+      .profile-container button {
+        cursor: pointer;
+        background-color: #4caf50;
+        color: #fff;
+        border: none;
+      }
+      .profile-container button:hover {
+        background-color: #45a049;
+        transition: all 0.3s ease;
+      }
+      .profile-container .profile-container .profile {
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="profile-container">
+      <h2>User Profile</h2>
+      <input type="text" id="name-input" placeholder="Enter name" />
+      <input type="number" id="age-input" placeholder="Enter age" />
+      <button onclick="showProfile()">Show Profile</button>
+      <div class="profile" id="profile-display"></div>
+    </div>
+  </body>
+  <script>
+    class User {
+      #name;
+      #age;
+
+      constructor(name, age) {
+        this.#name = name;
+        this.setAge(age); // Using the setter to validate and set age
+      }
+
+      setAge(age) {
+        if (age > 0 && age < 120) {
+          this.#age = age;
+        } else {
+          this.#age = "Invalid age";
+        }
+      }
+
+      getAge() {
+        return this.#age;
+      }
+
+      getName() {
+        return this.#name;
+      }
+
+      getProfile() {
+        return `Name: ${this.getName()}, Age: ${this.getAge()}`;
+      }
+    }
+
+    class ExtendedUser extends User {
+      constructor(name, age, occupation) {
+        super(name, age);
+        this.occupation = occupation;
+      }
+
+      getProfile() {
+        return `${super.getProfile()}, Occupation: ${this.occupation}`;
+      }
+    }
+
+    const showProfile = () => {
+      const nameInput = document.getElementById("name-input").value;
+      const ageInput = document.getElementById("age-input").value;
+      const profileDisplay = document.getElementById("profile-display");
+
+      if (nameInput && ageInput) {
+        const user = new ExtendedUser(
+          nameInput,
+          parseInt(ageInput),
+          "Programmer"
+        );
+        profileDisplay.textContent = user.getProfile();
+      } else {
+        alert("Please enter a valid name and age.");
+      }
+    };
+  </script>
+</html>
